@@ -1,4 +1,5 @@
 // learned from this https://stackoverflow.com/questions/1039986/how-to-implement-a-drag-and-drop-div-from-scratch-with-javascript
+// learned cloning nodes from http://stackoverflow.com/questions/11985156/clone-div-and-change-id 
 <!DOCTYPE html>
 <html>
 <body style="max-height:100rem; max-width:100rem; position: relative;">
@@ -19,7 +20,7 @@
   <p>This is another task box you can drag.</p>
 </div>
 
-<button>click</button>
+<button onClick="createNote()">click</button>
 
 <script>
 //   const div = document.getElementById("taskBox");
@@ -38,18 +39,18 @@
         var deltaX = startX - origX, deltaY = startY - origY;
 
         if (document.addEventListener) {
-             document.addEventListener("mousemove", moveHandler, true);
-             document.addEventListener("mouseup", upHandler, true);
+        document.addEventListener("mousemove", moveHandler, true);
+        document.addEventListener("mouseup", upHandler, true);
         } else if (document.attachEvent) {
-             elementToDrag.setCapture();
-             elementToDrag.attachEvent("onmousemove", moveHandler);
-             elementToDrag.attachEvent("onmouseup", upHandler);
-             elementToDrag.attachEvent("onlosecapture", upHandler);
+        elementToDrag.setCapture();
+        elementToDrag.attachEvent("onmousemove", moveHandler);
+        elementToDrag.attachEvent("onmouseup", upHandler);
+        elementToDrag.attachEvent("onlosecapture", upHandler);
         } else {
-             var oldmovehandler = document.onmousemove;
-             var olduphandler = document.onmouseup;
-             document.onmousemove = moveHandler;
-             document.onmouseup = upHandler;
+        var oldmovehandler = document.onmousemove;
+        var olduphandler = document.onmouseup;
+        document.onmousemove = moveHandler;
+        document.onmouseup = upHandler;
         }
 
         if (event.stopPropagation) event.stopPropagation();
@@ -60,32 +61,42 @@
 
         function moveHandler(e) {
         if (!e) e = window.event;
-             elementToDrag.style.left = (e.clientX - deltaX) + "px";
-             elementToDrag.style.top = (e.clientY - deltaY) + "px";
-             if (e.stopPropagation) e.stopPropagation();
-             else e.cancelBubble = true;
+        elementToDrag.style.left = (e.clientX - deltaX) + "px";
+        elementToDrag.style.top = (e.clientY - deltaY) + "px";
+        if (e.stopPropagation) e.stopPropagation();
+        else e.cancelBubble = true;
         }
 
         function upHandler(e) {
-             if (!e) e = window.event;
-             if (document.removeEventListener) {
-                 document.removeEventListener("mouseup", upHandler, true);
-                 document.removeEventListener("mousemove", moveHandler, true);
-             } else if (document.detachEvent) {
-                 elementToDrag.detachEvent("onlosecapture", upHandler);
-                 elementToDrag.detachEvent("onmouseup", upHandler);
-                 elementToDrag.detachEvent("onmousemove", moveHandler);
-                 elementToDrag.releaseCapture();
-             } else {
-                 document.onmouseup = olduphandler;
-                 document.onmousemove = oldmovehandler;
-             }
-             if (e.stopPropagation) e.stopPropagation();
-             else e.cancelBubble = true;
-             }
+        if (!e) e = window.event;
+        if (document.removeEventListener) {
+            document.removeEventListener("mouseup", upHandler, true);
+            document.removeEventListener("mousemove", moveHandler, true);
+        } else if (document.detachEvent) {
+            elementToDrag.detachEvent("onlosecapture", upHandler);
+            elementToDrag.detachEvent("onmouseup", upHandler);
+            elementToDrag.detachEvent("onmousemove", moveHandler);
+            elementToDrag.releaseCapture();
+        } else {
+            document.onmouseup = olduphandler;
+            document.onmousemove = oldmovehandler;
+        }
+        if (e.stopPropagation) e.stopPropagation();
+        else e.cancelBubble = true;
+        }
     }
 
-  
+    function createNote()
+    {
+        const newDiv = divsarray[0].cloneNode(true);
+        newDiv.style.left = (Math.random() * 300 + 100) + "px";
+        newDiv.style.top = (Math.random() * 300 + 100) + "px";
+        newDiv.addEventListener("mousedown", function (event) {
+            drag(newDiv, event);
+        });
+        document.body.appendChild(newDiv);
+    }
+
 </script>
 
 </body>
